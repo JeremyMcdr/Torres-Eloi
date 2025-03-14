@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const xlsService = require('../services/xlsService');
+const sqlService = require('../services/sqlService');
 
 // Route pour obtenir toutes les données KPI
-router.get('/data', (req, res) => {
+router.get('/data', async (req, res) => {
   try {
-    const data = xlsService.getAllData();
+    const data = await sqlService.getAllData();
     res.json(data);
   } catch (err) {
     console.error('Erreur lors de la récupération des données:', err);
@@ -14,9 +14,9 @@ router.get('/data', (req, res) => {
 });
 
 // Route pour obtenir les données par année
-router.get('/data/by-year', (req, res) => {
+router.get('/data/by-year', async (req, res) => {
   try {
-    const data = xlsService.getDataByYear();
+    const data = await sqlService.getDataByYear();
     res.json(data);
   } catch (err) {
     console.error('Erreur lors de la récupération des données par année:', err);
@@ -25,10 +25,10 @@ router.get('/data/by-year', (req, res) => {
 });
 
 // Route pour obtenir les données d'une année spécifique
-router.get('/data/year/:year', (req, res) => {
+router.get('/data/year/:year', async (req, res) => {
   try {
     const { year } = req.params;
-    const data = xlsService.getDataForYear(year);
+    const data = await sqlService.getDataForYear(year);
     res.json(data);
   } catch (err) {
     console.error('Erreur lors de la récupération des données pour l\'année:', err);
@@ -37,12 +37,23 @@ router.get('/data/year/:year', (req, res) => {
 });
 
 // Route pour obtenir les statistiques globales
-router.get('/stats', (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
-    const stats = xlsService.getStats();
+    const stats = await sqlService.getStats();
     res.json(stats);
   } catch (err) {
     console.error('Erreur lors de la récupération des statistiques:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Route pour obtenir les données de temps de validation
+router.get('/validation-time', async (req, res) => {
+  try {
+    const data = await sqlService.getValidationTimeData();
+    res.json(data);
+  } catch (err) {
+    console.error('Erreur lors de la récupération des données de temps de validation:', err);
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
